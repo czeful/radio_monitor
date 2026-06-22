@@ -1,0 +1,42 @@
+# 1. Убедись, что .gitignore уже создан (если нет — создай)
+cat > .gitignore << EOF
+# Virtual Environment
+venv/
+env/
+.venv/
+ENV/
+
+chunks/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Secrets & Config
+.env
+config.py
+
+# Audio / Large files
+*.mp3
+*.wav
+*.flac
+*.mp4
+*.h5
+*.onnx
+*.pt
+*.pth
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+EOF
