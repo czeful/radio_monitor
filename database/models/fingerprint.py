@@ -7,7 +7,7 @@ from datetime import datetime
 if TYPE_CHECKING:
     from models.song import Song
 
-class Fingerprint(Base):
+class FingerPrint(Base):
     __tablename__ = "fingerprints"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     song_id: Mapped[int] = mapped_column(ForeignKey["songs.id"])
