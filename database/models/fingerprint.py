@@ -1,4 +1,4 @@
-from models.base import Base
+from database.models.base import Base
 from sqlalchemy import String, ForeignKey, func
 from typing import TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column , relationship
@@ -10,8 +10,9 @@ if TYPE_CHECKING:
 class FingerPrint(Base):
     __tablename__ = "fingerprints"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    song_id: Mapped[int] = mapped_column(ForeignKey["songs.id"])
+    song_id: Mapped[int] = mapped_column(ForeignKey("songs.id"))
     hash: Mapped[str] = mapped_column(String(64), index=True)
+    offset: Mapped[str] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(server_default= func.now())
     
     song: Mapped["Song"] = relationship("Song" , back_populates="fingerprints", lazy="selectin")

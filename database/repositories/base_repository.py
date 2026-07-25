@@ -3,12 +3,12 @@ from typing import TYPE_CHECKING, TypeVar, Generic
 
 from sqlalchemy import select, delete, update, exists , func
 
-from models.base import Base
+from database.models.base import Base
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
-# Указываем, что T — это подкласс нашей Base
+
 T = TypeVar("T", bound=Base)
 
 
@@ -52,7 +52,7 @@ class BaseRepository(Generic[T]):
 
         if not kwargs:
             return await self.get_by_id(object_id)
-
+ 
         query = (
             update(self.model)
             .where(self.model.id == object_id)

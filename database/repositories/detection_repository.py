@@ -3,7 +3,7 @@ from repositories.base_repository import BaseRepository
 from typing import TYPE_CHECKING 
 from models.detection import Detection
 from datetime import datetime
-from sqlalchemy import select, delete, update, func, exists
+from sqlalchemy import select, func
 from database.enums import DetectionStatus , MatchType
 
 if TYPE_CHECKING:
@@ -49,7 +49,7 @@ class DetectionRepository(BaseRepository[Detection]):
             .where(Detection.created_at < end_date)
         )
     
-        #  Если передан song_id, сужаем поиск до конкретной песни
+       
         if song_id is not None:
             query = query.where(Detection.song_id == song_id)
         

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import String, DateTime, func, JSON, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from models.base import Base
+from database.models.base import Base
 from database.enums import ProcessingStatus
 
 if TYPE_CHECKING:

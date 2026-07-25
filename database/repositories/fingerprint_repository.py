@@ -1,7 +1,7 @@
 from repositories.base_repository import BaseRepository
 from typing import TYPE_CHECKING 
 from models.fingerprint import FingerPrint
-from sqlalchemy import select, delete, update, func, exists
+from sqlalchemy import select, exists
 
 
 if TYPE_CHECKING:
@@ -25,7 +25,7 @@ class FingerPrintRepository(BaseRepository[FingerPrint]):
             
     """
     async def get_song_by_fingerprint(self, fingerprint: str) -> list[int] | None:
-        query = select(FingerPrint).where(FingerPrint.hush == fingerprint)
+        query = select(FingerPrint).where(FingerPrint.hash == fingerprint)
         result = await self.session.execute(query)
         return list(result.scalars().all())
     

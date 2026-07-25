@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from sqlalchemy import select, delete, update, exists, func
+from sqlalchemy import select, exists
 from models.artist import Artist
 from repositories.base_repository import BaseRepository
 if TYPE_CHECKING:
@@ -28,4 +28,4 @@ class ArtistRepository(BaseRepository[Artist]):
     async def exists_by_name(self, artist_name: str) -> bool:
         query =  select(exists().where(Artist.name == artist_name))
         result = await self.session.execute(query)
-        return bool(result.scalar)    
+        return bool(result.scalar())    
