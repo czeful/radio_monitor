@@ -6,8 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column , relationship
 from datetime import datetime
 
 if TYPE_CHECKING: 
-    from models.song import Song
-
+    from database.models.song import Song
 class Artist(Base):
     __tablename__ = "artists"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

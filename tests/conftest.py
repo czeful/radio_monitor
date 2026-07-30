@@ -1,179 +1,106 @@
-import pytest_asyncio
 import asyncio
 import sys
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from database.models.base import Base
-
-
-# Импорт всех моделей обязательно
-import database.models.artist
-import database.models.song
-import database.models.detection
-import database.models.fingerprint
-import database.models.songs_artists
-import database.models.audio_segment
-import database.models.radio_file
-import database.models.unknown_detection
-
-
-from database.models.artist import Artist
-from database.models.song import Song
-
-from database.enums import MusicClass
-
-from tests.test_database import (
-    test_engine,
-    TestingSessionLocal
+import pytest_asyncio
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    async_sessionmaker,
 )
 
+from database.models import Base
+from database.models.artist import Artist
+from database.models.song import Song
+from database.enums import MusicClass
 
-# =====================================================
-# Windows asyncio fix
-# =====================================================
+
+from tests.test_database import create_test_engine
+
 
 if sys.platform == "win32":
-
     asyncio.set_event_loop_policy(
         asyncio.WindowsSelectorEventLoopPolicy()
     )
 
 
+@pytest_asyncio.fixture(scope="session")
+async def engine():
+    engine = create_test_engine()
 
-# =====================================================
-# Create / Drop test tables
-# =====================================================
+    async with engine.begin() as conn:
+        await conn.execute(text("DROP SCHEMA public CASCADE;"))
+        await conn.execute(text("CREATE SCHEMA public;"))
+        await conn.run_sync(Base.metadata.create_all)
 
-@pytest_asyncio.fixture(
-    scope="session",
-    autouse=True
-)
-async def create_tables():
+    yield engine
 
-    async with test_engine.begin() as conn:
+    async with engine.begin() as conn:
+        await conn.execute(text("DROP SCHEMA public CASCADE;"))
+        await conn.execute(text("CREATE SCHEMA public;"))
 
-        await conn.run_sync(
-            Base.metadata.drop_all
-        )
+    await engine.dispose()
 
-        await conn.run_sync(
-            Base.metadata.create_all
-        )
-
-
-    yield
-
-
-    async with test_engine.begin() as conn:
-
-        await conn.run_sync(
-            Base.metadata.drop_all
-        )
-
-
-    await test_engine.dispose()
-
-
-
-# =====================================================
-# Database session
-# =====================================================
 
 @pytest_asyncio.fixture
-async def session() -> AsyncSession:
+async def session(engine):
 
+    connection = await engine.connect()
 
-    async with TestingSessionLocal() as session:
+    transaction =  await connection.begin()
 
+    SessionLocal = async_sessionmaker(
+        bind=connection,
+        expire_on_commit=False,
+        class_=AsyncSession,
+        join_transaction_mode="create_savepoint",
+    )
 
+    async with SessionLocal() as session:
+        await session.begin_nested()
+
+        from sqlalchemy import event
+        @event.listens_for(session.sync_session, "after_transaction_end")
+        def restart_savepoint(sync_session, transaction_obj):
+            if transaction_obj.nested and not transaction_obj._parent.nested:
+                sync_session.begin_nested()
         yield session
 
-
-        # rollback незакоммиченных изменений
-        await session.rollback()
-
-
-
-        # очистка данных после теста
-        for table in reversed(
-            Base.metadata.sorted_tables
-        ):
-
-            await session.execute(
-                table.delete()
-            )
-
-
-        await session.commit()
-
-
-
-# =====================================================
-# Artist Factory
-# =====================================================
+        await transaction.rollback()
+        await connection.close()
 
 @pytest_asyncio.fixture
 async def artist_factory(session):
 
-    async def create_artist(
-        name: str = "Test Artist"
-    ) -> Artist:
+    async def create_artist(name: str = "Test Artist") -> Artist:
 
-
-        artist = Artist(
-            name=name
-        )
-
-
+        artist = Artist(name=name)
         session.add(artist)
-
         await session.flush()
-
-
         return artist
-
 
     return create_artist
 
 
-
-# =====================================================
-# Song Factory
-# =====================================================
-
 @pytest_asyncio.fixture
 async def song_factory(session):
-
-
     async def create_song(
         title: str = "Test Song",
         duration: int = 180,
         music_class: MusicClass = MusicClass.UNKNOWN,
-        artists: list[Artist] | None = None
+        artists: list[Artist] | None = None,
     ) -> Song:
-
 
         song = Song(
             title=title,
             duration=duration,
-            music_class=music_class
+            music_class=music_class,
         )
 
-
         if artists:
-
-            song.artists.extend(
-                artists
-            )
-
+            song.artists.extend(artists)
 
         session.add(song)
-
         await session.flush()
-
-
         return song
-
 
     return create_song

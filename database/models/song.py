@@ -5,12 +5,14 @@ from sqlalchemy import String, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.models.base import Base
 from database.enums import MusicClass
+from database.models.songs_artists import SongArtist
 
 if TYPE_CHECKING:
-    from models.artist import Artist
-    from models.detection import Detection
-    from models.fingerprint import FingerPrint
-    from models.unknown_detection import UnknownDetection
+    from database.models.artist import Artist
+    from database.models.detection import Detection
+    from database.models.fingerprint import FingerPrint
+    from database.models.unknown_detection import UnknownDetection
+
     
 class Song(Base):
     __tablename__ = "songs"
