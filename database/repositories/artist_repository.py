@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from sqlalchemy import select, exists
-from models.artist import Artist
-from repositories.base_repository import BaseRepository
+from database.models.artist import Artist
+from database.repositories.base_repository import BaseRepository
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,7 +20,7 @@ class ArtistRepository(BaseRepository[Artist]):
          to have the same name, I decided to return the response as a list to avoid errors. Perhaps it makes more
          sense to return just an object instead of a list of objects? I'll have to decide that later.
     """
-    async def get_by_name(self, artist_name:str) -> list[Artist]| None:
+    async def get_by_name(self, artist_name:str) -> list[Artist]:
         query = select(Artist).where(Artist.name == artist_name).order_by(Artist.id)
         result = await self.session.execute(query)
         return list(result.scalars().all())
