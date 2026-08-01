@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 class Detection(Base):
     __tablename__ = "detections"
-    id: Mapped[int | None] = mapped_column(primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     song_id: Mapped[int | None] = mapped_column(ForeignKey("songs.id"))
     audio_segment_id: Mapped[int] = mapped_column(ForeignKey("audio_segment.id"))
     match_type: Mapped[MatchType] = mapped_column(nullable=False)

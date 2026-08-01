@@ -12,7 +12,7 @@ class FingerPrint(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     song_id: Mapped[int] = mapped_column(ForeignKey("songs.id"))
     hash: Mapped[str] = mapped_column(String(64), index=True)
-    offset: Mapped[str] = mapped_column(nullable=False)
+    offset: Mapped[int] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(server_default= func.now())
     
     song: Mapped["Song"] = relationship("Song" , back_populates="fingerprints", lazy="selectin")

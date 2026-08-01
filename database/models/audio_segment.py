@@ -20,7 +20,7 @@ class AudioSegment(Base):
     file_path:     Mapped[str] = mapped_column(String(255), nullable=False)
     start_time:    Mapped[float] = mapped_column(nullable=False)
     end_time:      Mapped[float] = mapped_column(nullable=False)
-    confidace:     Mapped[float] = mapped_column()
+    confidence:     Mapped[float] = mapped_column()
     created_at:    Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at:    Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     

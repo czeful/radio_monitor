@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 
 
 from sqlalchemy import  update
-from models.radio_file import RadioFile
-from repositories.base_repository import BaseRepository
+from database.models.radio_file import RadioFile
+from database.repositories.base_repository import BaseRepository
 from database.enums import ProcessingStatus
 if  TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession 
@@ -16,7 +16,7 @@ class RadioFileRepository(BaseRepository[RadioFile]):
         super().__init__(session=session, model=RadioFile)
 
     
-    async def  update_status(self, file_id: int, new_status: ProcessingStatus) -> RadioFile:
+    async def  update_status(self, file_id: int, new_status: ProcessingStatus) -> RadioFile | None:
         query = (
             update(RadioFile)
             .where(RadioFile.id == file_id)

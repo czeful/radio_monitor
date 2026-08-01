@@ -1,12 +1,12 @@
 from __future__ import annotations
-from repositories.base_repository import BaseRepository
+from database.repositories.base_repository import BaseRepository
 from typing import TYPE_CHECKING
 from datetime import datetime
 
 
-from models.radio_file import RadioFile 
+from database.models.radio_file import RadioFile 
 from database.enums import ProcessingStatus
-from models.audio_segment import AudioSegment
+from database.models.audio_segment import AudioSegment
 from sqlalchemy import select, delete 
 
 if TYPE_CHECKING:
@@ -28,3 +28,10 @@ class AudioSegmentRepository(BaseRepository[AudioSegment]):
         query = delete(AudioSegment).where(AudioSegment.radio_file_id == file_status_query)
         result = await self.session.execute(query)
         return result.rowcount
+
+
+    async def get_by_radio_file_id(self, radio_file_id:int) -> list[AudioSegment]:
+        query = select(AudioSegment).where(AudioSegment.radio_file_id == radio_file_id).order_by(AudioSegment.radio_file_id)
+        result = await self.session.execute(query)
+
+        return list(result.scalars().all())

@@ -1,7 +1,7 @@
 from __future__ import annotations
-from repositories.base_repository import BaseRepository
+from database.repositories.base_repository import BaseRepository
 from typing import TYPE_CHECKING 
-from models.song import Song
+from database.models.song import Song
 from sqlalchemy import select, exists
 from database.enums import MusicClass
 
@@ -26,4 +26,4 @@ class SongRepository(BaseRepository[Song]):
     async def exists_by_title(self, song_title: str) -> bool:
         query =  select(exists().where(Song.title == song_title))
         result = await self.session.execute(query)
-        return bool(result.scalar)
+        return bool(result.scalar())

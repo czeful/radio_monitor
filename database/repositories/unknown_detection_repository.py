@@ -1,8 +1,8 @@
 from __future__ import annotations
-from repositories.base_repository import BaseRepository
+from database.repositories.base_repository import BaseRepository
 from typing import TYPE_CHECKING 
 from datetime import datetime
-from models.unknown_detection import UnknownDetection
+from database.models.unknown_detection import UnknownDetection
 from sqlalchemy import select, delete, update, func, exists
 from database.enums import ProcessingStatus
 if TYPE_CHECKING:
@@ -16,15 +16,15 @@ class UnknownDetectionRepository(BaseRepository[UnknownDetection]):
     
     async def get_pending(
             self,
-            limit: int,
+            limit: int = 10,
             offset:int = 0
             ) -> list[UnknownDetection]:
         
-        query = select(UnknownDetection).where(UnknownDetection.status == "PENDING")  
+        query = select(UnknownDetection).where(UnknownDetection.status == "PENDING").limit(limit) 
         result = await self.session.execute(query)
         return list(result.scalars().all())
     
-    async def mark_processed(self, unknown_detection_id: int, status: ProcessingStatus) -> UnknownDetection:
+    async def mark_processed(self, unknown_detection_id: int, status: ProcessingStatus) -> UnknownDetection | None:
         
         query = (
             update(self.model)

@@ -1,7 +1,7 @@
 from __future__ import annotations
-from repositories.base_repository import BaseRepository
+from database.repositories.base_repository import BaseRepository
 from typing import TYPE_CHECKING 
-from models.detection import Detection
+from database.models.detection import Detection
 from datetime import datetime
 from sqlalchemy import select, func
 from database.enums import DetectionStatus , MatchType
@@ -29,8 +29,8 @@ class DetectionRepository(BaseRepository[Detection]):
         исменно одной песни. Тут суть в том что пока Detection.status не будет равен Matched он может меняться
         или если confidence низкий
     '''
-    async  def get_by_song(self, song_id: int ) -> list[Detection] | None:
-        query = select(Detection).where(Detection.song_id == song_id).order_by(Detection.created_at)
+    async  def get_by_song(self, song_id: int, limit: int = 10 ) -> list[Detection]:
+        query = select(Detection).where(Detection.song_id == song_id).order_by(Detection.created_at).limit(limit)
         result = await self.session.execute(query)
         return list(result.scalars().all())
     

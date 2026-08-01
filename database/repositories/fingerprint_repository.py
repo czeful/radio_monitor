@@ -24,12 +24,12 @@ class FingerPrintRepository(BaseRepository[FingerPrint]):
             a list of song_ids. I think this is incredibly rare; if it doesn't work out in practice, we'll simply return a single ID.
             
     """
-    async def get_song_by_fingerprint(self, fingerprint: str) -> list[int] | None:
-        query = select(FingerPrint).where(FingerPrint.hash == fingerprint)
+    async def get_song_by_fingerprint(self, fingerprint: str) -> list[FingerPrint]:
+        query = select(FingerPrint).where(FingerPrint.hash == fingerprint).order_by(FingerPrint.id)
         result = await self.session.execute(query)
         return list(result.scalars().all())
     
-    async def exists(self, fingerprint: str) -> bool:
+    async def exists_fingerprint(self, fingerprint: str) -> bool:
         query = select(exists().where(FingerPrint.hash == fingerprint))
         result  = await self.session.execute(query)
         return bool(result.scalar())    

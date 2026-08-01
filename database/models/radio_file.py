@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from database.models.base import Base
 from typing import TYPE_CHECKING
-from sqlalchemy import ForeignKey, func, String, DateTime
+from sqlalchemy import ForeignKey, func, String, DateTime, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from database.enums import ProcessingStatus
@@ -21,8 +21,8 @@ class RadioFile(Base):
     duration: Mapped[int | None] = mapped_column() 
     status: Mapped[ProcessingStatus] = mapped_column()
 
-    created_at: Mapped[float] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[float] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     audio_segments: Mapped[list["AudioSegment"]] = relationship("AudioSegment", back_populates="radio_file", lazy = "selectin")
 
