@@ -1,6 +1,11 @@
 import json 
 from pathlib import Path
-
+'''
+    в начале думал все записывать в json file но 
+    так получилось что файлов и запписей потенциально
+    можнет быть очень много по этой причине сразу перешли
+    на postgreSql, но на всякий оставил этот файл с json
+'''
 class FingerprintDatabase:
 
     def __init__(self, database_path: str):
