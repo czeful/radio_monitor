@@ -1,6 +1,7 @@
-from repositories.base_repository import BaseRepository
+from __future__ import annotations
+from database.repositories.base_repository import BaseRepository
 from typing import TYPE_CHECKING 
-from models.fingerprint import FingerPrint
+from database.models.fingerprint import FingerPrint
 from sqlalchemy import select, exists
 
 
