@@ -63,7 +63,7 @@ async def test_get_song_by_fingerprint_collision(
 
     assert len(result) == 2
     assert result[0].song_id == song_first.id
-    assert result[1] == song_second.id
+    assert result[1].song_id == song_second.id
 
 
 @pytest.mark.asyncio
@@ -115,7 +115,7 @@ async def test_exists_fingerprint_with_true_fingerprint(session, fingerprint_fac
     result = await repo.exists_fingerprint(fingerprint=fingerprint_true_hash.hash)
     assert result == True
 
-
+@pytest.mark.asyncio
 async def test_exists_fingerprint_with_false_fingerprint(session, fingerprint_factory):
     repo = FingerPrintRepository(session=session)
 
