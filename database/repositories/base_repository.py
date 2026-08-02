@@ -18,7 +18,7 @@ class BaseRepository(Generic[T]):
         self.session = session
         self.model = model
 
-    async def get_by_id(self, object_id: int) -> T | None:
+    async def get_by_id(self, object_id: int) -> list[T] | None:
         query = select(self.model).where(self.model.id == object_id)
         result = await self.session.execute(query)
         return result.scalar_one_or_none()

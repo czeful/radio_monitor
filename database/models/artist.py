@@ -11,6 +11,7 @@ class Artist(Base):
     __tablename__ = "artists"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
+  # class/nation: Mapped[str] = mapped_column() 
     created_at: Mapped[datetime] = mapped_column(server_default= func.now())
     songs: Mapped[list["Song"]] = relationship(
         "Song",

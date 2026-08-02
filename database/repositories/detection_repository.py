@@ -18,8 +18,8 @@ class DetectionRepository(BaseRepository[Detection]):
     '''
         get_history - вывод N количество детекшнов, не зависимо от песни
     '''
-    async  def get_history(self, limit:int) -> list[Detection] :
-        query = select(Detection).order_by(Detection.created_at.desc()).limit(limit)
+    async  def get_history(self, limit:int = 10, offset: int = 0) -> list[Detection] :
+        query = select(Detection).order_by(Detection.created_at.desc()).limit(limit).offset(offset)
         result = await self.session.execute(query)
         return list(result.scalars().all())
 
@@ -29,8 +29,8 @@ class DetectionRepository(BaseRepository[Detection]):
         исменно одной песни. Тут суть в том что пока Detection.status не будет равен Matched он может меняться
         или если confidence низкий
     '''
-    async  def get_by_song(self, song_id: int, limit: int = 10 ) -> list[Detection]:
-        query = select(Detection).where(Detection.song_id == song_id).order_by(Detection.created_at).limit(limit)
+    async  def get_by_song(self, song_id: int, limit: int = 10, offset:int = 0 ) -> list[Detection]:
+        query = select(Detection).where(Detection.song_id == song_id).order_by(Detection.created_at).limit(limit).offset(offset=offset)
         result = await self.session.execute(query)
         return list(result.scalars().all())
     
